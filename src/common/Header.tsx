@@ -1,8 +1,15 @@
 import {AppBar, Badge, Box, Container, IconButton, Toolbar, Tooltip} from "@mui/material";
 import LogoImage from "../assets/LogoImage.tsx";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import {useNavigate} from "react-router-dom";
 
 const Header = () => {
+
+    const navigate = useNavigate();
+
+    const handleNavigate = () => {
+        navigate(`/`);
+    };
 
     return (
         <AppBar position="static" elevation={0}>
@@ -15,7 +22,7 @@ const Header = () => {
                         justifyContent: 'center',
                         flexGrow: 1
                     }}>
-                        <img src={LogoImage.logoImage} alt='Telenor Logo without text' width='65.125px' height='60px'/>
+                        <img onClick={handleNavigate} src={LogoImage.logoImage} alt='Telenor Logo without text' width='65.125px' height='60px'/>
                     </Box>
                     <Box sx={{flexGrow: 0}}>
                         <Tooltip title="Vis handlekurven">

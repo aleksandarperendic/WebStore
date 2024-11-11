@@ -1,7 +1,10 @@
 import {Box, Button, Card, CardActions, CardContent, CardMedia, Rating, Tooltip, Typography} from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import {useNavigate} from "react-router-dom";
+import {norwegianPrice} from "../utils/Localisation.ts";
 
 interface CardItemProps {
+    productId: number;
     productTitle: string;
     productDescription: string;
     price: number;
@@ -12,7 +15,13 @@ interface CardItemProps {
     }
 }
 
-const CardItem: React.FC<CardItemProps> = ({productTitle, productDescription, price, productImage, rating}) => {
+const CardItem: React.FC<CardItemProps> = ({productId, productTitle, productDescription, price, productImage, rating}) => {
+
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate(`/product/${productId}`);
+    };
 
     const truncatedDescription = productDescription.length > 230
         ? productDescription.substring(0, 230) + '...'
@@ -22,9 +31,8 @@ const CardItem: React.FC<CardItemProps> = ({productTitle, productDescription, pr
         ? productTitle.substring(0, 24) + '...'
         : productTitle;
 
-    const adjustedPrice = (price * 11.08).toFixed(0);
     return (
-        <Card onClick={() => window.location.href = "https://avinor.no"}>
+        <Card onClick={handleClick}>
             <CardMedia
                 sx={{height: 190}}
                 image={productImage}
@@ -57,7 +65,7 @@ const CardItem: React.FC<CardItemProps> = ({productTitle, productDescription, pr
 
             <CardActions>
                 <Typography variant="h6" sx={{color: 'text.primary'}}>
-                    {`${adjustedPrice} NOK`}
+                    {`${norwegianPrice(price)} NOK`}
                 </Typography>
 
                 <Button startIcon={<ShoppingCartIcon/>} variant="contained" color="primary"

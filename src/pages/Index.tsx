@@ -3,17 +3,27 @@ import {useEffect, useState} from "react";
 import {Box, Grid, Grid2, InputAdornment, TextField} from "@mui/material";
 import {Product} from "../utils/types.ts";
 import SearchIcon from '@mui/icons-material/Search';
+import {fetchProducts} from "../utils/api.ts";
 
 const Index = () => {
 
     const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>("");
 
-
     useEffect(() => {
-        fetch("/api/products")
-            .then(response => response.json())
-            .then(data => setProducts(data));
+        const loadProducts = async () => {
+            setLoading(true);
+            setError(null);
+
+            const data = await fetchProducts();
+            if (data) {
+                setProducts(data);
+            }
+            setLoading(false);
+        };
+        loadProducts();
     }, []);
 
     const filteredProducts = products.filter((product) =>
@@ -21,7 +31,8 @@ const Index = () => {
         product.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    console.log(products);
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
 
     return (
         <>
@@ -49,6 +60,7 @@ const Index = () => {
                     {filteredProducts.map((product: Product) => (
                         <Grid item xs={12} sm={6} md={4} key={product.id}>
                             <CardItem
+                                productId={product.id}
                                 productTitle={product.title}
                                 productImage={product.image}
                                 price={product.price}
