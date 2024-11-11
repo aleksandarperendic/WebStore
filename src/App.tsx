@@ -1,11 +1,16 @@
-import './App.css'
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import Index from "./pages/Index.tsx";
+import Header from "./common/Header.tsx";
 
 function App() {
 
     return (
-        <>
-            <h1>Hello World</h1>
-        </>
+        <BrowserRouter>
+            <Header />
+            <Routes>
+                <Route path="/" element={<Index/>}/>
+            </Routes>
+        </BrowserRouter>
     )
 }
 
