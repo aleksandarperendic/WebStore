@@ -3,12 +3,15 @@ import {createRoot} from 'react-dom/client'
 import App from './App.tsx'
 import {CssBaseline, ThemeProvider} from "@mui/material";
 import {theme} from "./theme.ts";
+import {CartProvider} from "./utils/CartContext.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline/>
-            <App/>
+            <CartProvider>
+                <App/>
+            </CartProvider>
         </ThemeProvider>
     </StrictMode>,
 )

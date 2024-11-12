@@ -27,7 +27,7 @@ startLocal: ## Start locally from the built image
 	docker compose -p "webstore-container" up -d
 
 stopLocal: ## Stop the local container
-	docker compose down
+	docker compose -p "webstore-container" down
 
 help: Makefile  ## Print this help screen
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)

@@ -3,20 +3,26 @@ import {useEffect, useState} from "react";
 import {Product} from "../utils/types.ts";
 import {fetchProductById} from "../utils/api.ts";
 import {
-    Box, Button,
+    Box,
+    Button,
     FormControl,
     Grid,
     IconButton,
-    InputLabel, MenuItem,
+    InputLabel,
+    MenuItem,
     Paper,
     Rating,
-    Select, SelectChangeEvent,
+    Select,
+    SelectChangeEvent,
     Tooltip,
     Typography
 } from "@mui/material";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import {norwegianCategory, norwegianPrice} from "../utils/Localisation.ts";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import {useAddToCart} from "../utils/CartAction.ts";
+import LoadingPage from "../common/LoadingPage.tsx";
+import AddToCartSnackbar from "../components/AddToCartSnackbar.tsx";
 
 const ProductPage = () => {
     const {id} = useParams<{ id: string }>();
@@ -26,6 +32,8 @@ const ProductPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [size, setSize] = useState('');
+
+    const {addToCart, snackbarOpen} = useAddToCart();
 
     useEffect(() => {
         const loadProduct = async () => {
@@ -51,27 +59,29 @@ const ProductPage = () => {
         navigate(`/`);
     };
 
-
-    console.log(product);
-
-
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <LoadingPage/>;
     if (error) return <p>{error}</p>;
 
     if (product)
         return (
-
             <Box
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    height: '85vh',
-                    marginTop: '1%',
+                    minHeight: '85vh',
+                    paddingX: '10%',
+                    marginTop: "12vh"
                 }}
             >
-
-                <Paper sx={{width: "80vw", minHeight: "70vh", padding: "2%", paddingBottom: '20px', margin: "auto", marginTop: "5%"}}>
+                <Paper
+                    sx={{
+                        width: "100%",
+                        minHeight: "70vh",
+                        padding: "2%",
+                        paddingBottom: '20px',
+                    }}
+                >
                     <Tooltip title="Tilbake til hovedside">
                         <IconButton
                             size="large"
@@ -90,9 +100,14 @@ const ProductPage = () => {
                             />
                         </IconButton>
                     </Tooltip>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={4} alignItems="center">
 
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={4}
+                              sx={{
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center'
+                              }}>
                             <Box
                                 component="img"
                                 sx={{
@@ -106,8 +121,12 @@ const ProductPage = () => {
                                 src={product.image}
                             />
                         </Grid>
-                        <Grid item xs={12} md={8}
-                              sx={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+                        <Grid
+                            item
+                            xs={12}
+                            md={8}
+                            sx={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}
+                        >
                             <Typography variant="h4">
                                 {product.title}
                             </Typography>
@@ -118,7 +137,7 @@ const ProductPage = () => {
                                 {product.description}
                             </Typography>
 
-                            <Box sx={{ marginBottom: '20px', marginTop: '20px' }}>
+                            <Box sx={{marginBottom: '20px', marginTop: '20px'}}>
                                 <Typography variant="body1">
                                     Hva sier våre kunder?
                                 </Typography>
@@ -130,7 +149,7 @@ const ProductPage = () => {
                             </Box>
 
                             {isClothingCategory && (
-                                <FormControl sx={{ marginTop: 2, marginBottom: 15, width: { xs: '100%', md: '60%' }  }}>
+                                <FormControl sx={{marginTop: 2, marginBottom: 15, width: {xs: '100%', md: '60%'}}}>
                                     <InputLabel>Velg størrelse</InputLabel>
                                     <Select
                                         variant="outlined"
@@ -147,16 +166,24 @@ const ProductPage = () => {
                                 </FormControl>
                             )}
 
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                <Typography variant="h5" sx={{ color: 'text.primary' }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    width: '100%',
+                                }}
+                            >
+                                <Typography variant="h5" sx={{color: 'text.primary'}}>
                                     {`${norwegianPrice(product.price)} NOK`}
                                 </Typography>
                                 <Button
                                     disabled={isClothingCategory && size === ''}
-                                    startIcon={<ShoppingCartIcon />}
+                                    startIcon={<ShoppingCartIcon/>}
                                     variant="contained"
                                     color="primary"
                                     size="large"
+                                    onClick={() => addToCart(product, size)}
                                 >
                                     Legg i handlekurv
                                 </Button>
@@ -164,6 +191,7 @@ const ProductPage = () => {
                         </Grid>
                     </Grid>
                 </Paper>
+                <AddToCartSnackbar open={snackbarOpen}/>
             </Box>
 
         )
